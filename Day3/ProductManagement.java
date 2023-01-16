@@ -18,8 +18,7 @@ public class ProductManagement {
             while ((line = sc1.readLine()) != null) // returns a Boolean value
             {
                 String[] productSplit = line.split(splitBy); // use comma as separator
-                products.add(new Product(Integer.parseInt(productSplit[0]), productSplit[1],
-                        Integer.parseInt(productSplit[2]), Integer.parseInt(productSplit[3])));
+                products.add(new Product(Integer.parseInt(productSplit[0]), productSplit[1], Integer.parseInt(productSplit[2]), Integer.parseInt(productSplit[3])));
             }
             sc1.close();
         }
@@ -62,9 +61,9 @@ public class ProductManagement {
                     int dis = sc.nextInt();
                     switch (dis){
                     case 1: {
-                        System.out.println("P_Id" + "\t" + "P_Name" + "\t" + "Price" + "\t" + "Stock");
+                        System.out.println("P_Id" + "\t" + "P_Name" + "\t\t\t" + "Price" + "\t" + "Stock"  );
                         for (Product p : products) {
-                            System.out.println(p.id + "\t" + p.name + "\t" + p.price + "\t" + p.stock);
+                            System.out.println(p.id + "\t\t" + p.name + "\t\t\t" + p.price + "\t" + p.stock );
                         }
                         System.out.println("\n");
                         break;
@@ -147,7 +146,27 @@ public class ProductManagement {
         }
     }
 
+    static void genBill(int item, int price){
+        System.out.println(item);
+        System.out.println(price);
+        double dis = 0.0;
+        if(item>10 && item<50){
+            dis = 0.1;
+            //dis += (price*item *0.1);
+        }
+        else if(item>50 && item<100){
+            dis = 0.2;
+            //dis += (price*item *0.2);
+        }
+        else if(item>100){
+            dis = 0.3;
+            //dis += (price*item *0.3);
+        }
+        double tot_price;
+        tot_price = (price * item)  - (dis * price);
+        System.out.println(tot_price);
 
+    }
     static void allocateWholesaler(int wholeSalerId, int productId, int itemCountToBuy) {
         for (Wholesaler eachWholesaler : wholesaler_details) {
             if (eachWholesaler.getWholesaler_id() == wholeSalerId) {
@@ -155,10 +174,10 @@ public class ProductManagement {
                     if (eachProduct.getStock() > itemCountToBuy) {
                         if (eachProduct.getId() == productId) {
                             if (eachWholesaler.wholesaler_product_list.size() == 0) {
-                                Product newProduct = new Product(eachProduct.getId(), eachProduct.getName(),
-                                        eachProduct.getPrice(), itemCountToBuy);
+                                Product newProduct = new Product(eachProduct.getId(), eachProduct.getName(), eachProduct.getPrice(), itemCountToBuy);
                                 eachWholesaler.setWholesaler_product_list(newProduct);
                                 eachProduct.setStock(eachProduct.getStock() - itemCountToBuy);
+                                genBill(itemCountToBuy , eachProduct.getPrice());
                             } else {
                                 int flag = 0;
                                 for (Product checkProduct : eachWholesaler.wholesaler_product_list) {
@@ -166,12 +185,15 @@ public class ProductManagement {
                                         checkProduct.setStock(checkProduct.getStock() + itemCountToBuy);
                                         eachProduct.setStock(eachProduct.getStock() - itemCountToBuy);
                                         flag = 1;
+                                        genBill(itemCountToBuy , eachProduct.getPrice());
+
                                     }
                                     if (flag == 0) {
                                         Product newProduct = new Product(eachProduct.getId(), eachProduct.getName(),
                                                 eachProduct.getPrice(), itemCountToBuy);
                                         eachWholesaler.setWholesaler_product_list(newProduct);
                                         eachProduct.setStock(eachProduct.getStock() - itemCountToBuy);
+                                        genBill(itemCountToBuy , eachProduct.getPrice());
                                         break;
                                     }
                                 }
@@ -183,6 +205,31 @@ public class ProductManagement {
                 }
             }
         }
+
+
+
+
+    }
+    static void RgenBill(int item, int price){
+        System.out.println(item);
+        System.out.println(price);
+        double dis = 0.0;
+        if(item>10 && item<50){
+            dis = 0.05;
+            //dis += (price*item *0.1);
+        }
+        else if(item>50 && item<100){
+            dis = 0.1;
+            //dis += (price*item *0.2);
+        }
+        else if(item>100){
+            dis = 1.5;
+            //dis += (price*item *0.3);
+        }
+        double tot_price;
+        tot_price = (price * item)  - (dis * price);
+        System.out.println(tot_price);
+
     }
 
     static void allocateRetailer(int retailerId, int wholeSalerId, int productId, int itemCountToBuy) {
@@ -194,10 +241,10 @@ public class ProductManagement {
                             if (pr.getId() == productId) {
                                 if (pr.getStock() > itemCountToBuy) {
                                     if (re.retailer_product_list.size() == 0) {
-                                        Product newProduct = new Product(pr.getId(), pr.getName(),
-                                                pr.getPrice(), itemCountToBuy);
+                                        Product newProduct = new Product(pr.getId(), pr.getName(), pr.getPrice(), itemCountToBuy);
                                         re.setRetailerProductList(newProduct);
                                         pr.setStock(pr.getStock() - itemCountToBuy);
+                                        RgenBill(itemCountToBuy , pr.getPrice());
                                     } else {
                                         int flag = 0;
                                         for (Product checkProduct : re.retailer_product_list) {
@@ -205,12 +252,15 @@ public class ProductManagement {
                                                 checkProduct.setStock(checkProduct.getStock() + itemCountToBuy);
                                                 pr.setStock(pr.getStock() - itemCountToBuy);
                                                 flag = 1;
+                                                genBill(itemCountToBuy , pr.getPrice());
+
                                             }
                                             if (flag == 0) {
                                                 Product newProduct = new Product(pr.getId(), pr.getName(),
                                                         pr.getPrice(), itemCountToBuy);
                                                 re.setRetailerProductList(newProduct);
                                                 pr.setStock(pr.getStock() - itemCountToBuy);
+                                                RgenBill(itemCountToBuy , pr.getPrice());
                                                 break;
                                             }
                                         }
@@ -239,8 +289,7 @@ public class ProductManagement {
         for (int i = 0; i < wholesaler_details.size(); i++) {
             for (Product pr : wholesaler_details.get(i).wholesaler_product_list) {
                 if (pr.getId() == productId) {
-                    System.out.println("Wholesaler ID :" + wholesaler_details.get(i).getWholesaler_id()
-                            + " -- Wholesaler name :" + wholesaler_details.get(i).getWholesaler_name());
+                    System.out.println("Wholesaler ID :" + wholesaler_details.get(i).getWholesaler_id() + " -- Wholesaler name :" + wholesaler_details.get(i).getWholesaler_name());
                     System.out.println("ProductId" + " " + "ProductName" + " " + "Price" + " " + "Stock");
                     System.out.println(pr.getId() + " " + pr.getName() + " " + pr.getPrice() + " " + pr.getStock());
                 }
@@ -252,8 +301,7 @@ public class ProductManagement {
         for (int i = 0; i < retailer_details.size(); i++) {
             for (Product pr : retailer_details.get(i).retailer_product_list) {
                 if (pr.getId() == productId) {
-                    System.out.println("Retailer ID :" + retailer_details.get(i).getRetailer_id()
-                            + " -- Retailer name :" + retailer_details.get(i).getRetailer_name());
+                    System.out.println("Retailer ID :" + retailer_details.get(i).getRetailer_id() + " -- Retailer name :" + retailer_details.get(i).getRetailer_name());
                     System.out.println("ProductId" + " " + "ProductName" + " " + "Price" + " " + "Stock");
                     System.out.println(pr.getId() + " " + pr.getName() + " " + pr.getPrice() + " " + pr.getStock());
                 }

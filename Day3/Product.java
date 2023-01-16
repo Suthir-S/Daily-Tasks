@@ -2,8 +2,11 @@ class Product {
     int id;
     String name;
     int price;
+
+
     int stock;
     int w_id;
+
 
     public int getId() {
         return id;
